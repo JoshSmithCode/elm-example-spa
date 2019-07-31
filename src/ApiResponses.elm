@@ -48,13 +48,21 @@ articleResponse =
 type alias MultipleArticles =
     { articles : Dict String Article
     , authors : Dict String Author
+    , count : Int
     }
 
 
-multipleArticleResponse : Decoder MultipleArticles
-multipleArticleResponse =
-    Decode.field "articles"
-        <| Decode.map (List.foldl normalizeArticles { articles = Dict.empty, authors = Dict.empty })
+multipleArticleDecoder : Decoder MultipleArticles
+multipleArticleDecoder =
+    Decode.map2
+        (\multipleArticles count -> {multipleArticles | count = count})
+        (Decode.field "articles" normalizedArticlesDecoder)
+        (Decode.field "articlesCount" Decode.int)
+
+
+normalizedArticlesDecoder : Decoder MultipleArticles
+normalizedArticlesDecoder =
+    Decode.map (List.foldl normalizeArticles { articles = Dict.empty, authors = Dict.empty, count = 0 })
         <| Decode.list articleResponse
 
 
@@ -64,7 +72,7 @@ normalizeArticles {article, author} {articles, authors} =
         newArticles = Dict.insert article.slug article articles
         newAuthors = Dict.insert author.username author authors
     in
-        { articles = newArticles, authors = newAuthors }
+        { articles = newArticles, authors = newAuthors, count = 0 }
 
 
 type alias SingleComment =

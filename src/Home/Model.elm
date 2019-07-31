@@ -1,7 +1,5 @@
 module Home.Model exposing (..)
 
-import Array exposing (Array)
-
 
 type alias Model =
     { tags : List String

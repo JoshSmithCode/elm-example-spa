@@ -1,9 +1,9 @@
 module Router exposing (..)
 
-import Browser exposing (UrlRequest)
 import Url exposing (Url)
 import Url.Parser as Url exposing (..)
 import Msg exposing (Msg)
+import Home.ApiRequests as HomeApi
 
 
 type Route
@@ -23,3 +23,12 @@ routeParser  =
         [ map Home top
         , map Register <| s "register"
         ]
+
+
+getInitCmd : Route -> Cmd Msg
+getInitCmd route =
+    case route of
+        Home ->
+            HomeApi.init
+        _ ->
+            Cmd.none

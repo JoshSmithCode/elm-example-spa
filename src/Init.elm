@@ -16,12 +16,15 @@ type alias Flags =
 
 init : Flags -> Url -> Navigation.Key -> (Model, Cmd Msg)
 init flags url navigationKey =
-    (
-    { key = navigationKey
-    , route = Router.parseUrl url
-    , home = Home.init
-    , entities = Entities.init
-    }
-    , Cmd.none
+    let
+        model =
+            { key = navigationKey
+            , route = Router.parseUrl url
+            , home = Home.init
+            , entities = Entities.init
+            }
+    in
+    ( model
+    , Router.getInitCmd model.route
     )
 
